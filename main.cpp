@@ -30,22 +30,14 @@ std::vector<glm::vec2> interpolateQuadraticBezierSegment(
     return points;
 }
 
-void printPoly(std::vector<glm::vec2> poly) {
-    std::cout << "[";
-    for (auto vec: poly) {
-        std::cout << "[" << vec.x << ", " << vec.y << "]";
-    }
-    std::cout << "]" << std::endl;
-}
-
 std::vector<glm::vec2> processContour(
     const std::vector<FT_Vector>& outlinePoints,
     const std::vector<char>& outlineTags,
     int contourStartIdx,
     int contourEndIdx,
     int resolution,
-    float xOffset
-) {
+    float xOffset) {
+
     int currentIndex = contourStartIdx;
     std::vector<glm::vec2> contourPoints;
     while (currentIndex <= contourEndIdx) {
@@ -53,7 +45,6 @@ std::vector<glm::vec2> processContour(
        glm::vec2 start(outlinePoints[currentIndex].x + xOffset, outlinePoints[currentIndex].y);
        contourPoints.push_back(start);
        currentIndex++;
-       //std::cout << (FT_CURVE_TAG(outlineTags[currentIndex]) == FT_CURVE_TAG_CONIC) << std::endl;
 
        std::vector<glm::vec2> controlPoints;
        while (FT_CURVE_TAG(outlineTags[currentIndex]) == FT_CURVE_TAG_CONIC && currentIndex <= contourEndIdx) {
@@ -62,7 +53,7 @@ std::vector<glm::vec2> processContour(
            currentIndex++;
        }
 
-       // If there is an even number of control points, we need to add the midpoint to the list
+       // Add midpoint if even number of control points
        if (controlPoints.size() > 0 && controlPoints.size() % 2 == 0) {
            size_t lastControlIndex = controlPoints.size() - 1;
            glm::vec2 midpoint = (controlPoints[lastControlIndex] + controlPoints[lastControlIndex - 1]) * 0.5f;
@@ -74,7 +65,6 @@ std::vector<glm::vec2> processContour(
            idx = contourStartIdx;
        glm::vec2 end(outlinePoints[idx].x + xOffset, outlinePoints[idx].y);
 
-       // Interpolate each segment defined by two on-curve points and a series of control points
        for (size_t i = 0; i < controlPoints.size(); i += 2) {
            glm::vec2 control = controlPoints[i];
            glm::vec2 onCurve = (i + 1 < controlPoints.size()) ? controlPoints[i + 1] : end;
@@ -84,6 +74,7 @@ std::vector<glm::vec2> processContour(
        }
     }
     return contourPoints;
+
 }
 
 std::vector<std::vector<glm::vec2>> processOutline(const FT_Outline& outline, int resolution, float xOffset) {
@@ -94,7 +85,6 @@ std::vector<std::vector<glm::vec2>> processOutline(const FT_Outline& outline, in
     int contourStartIdx = 0;
     for (int contourIndex = 0; contourIndex < outline.n_contours; ++contourIndex) {
         int contourEndIdx = outline.contours[contourIndex];
-        std::cout << contourStartIdx << " " << contourEndIdx << std::endl;
         std::vector<glm::vec2> contourPoints = processContour(outlinePoints, outlineTags, contourStartIdx, contourEndIdx, resolution, xOffset);
         points.push_back(contourPoints);
         contourStartIdx = contourEndIdx+1;
@@ -123,7 +113,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
     FT_Set_Pixel_Sizes(face, 0, 48);
     FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
-    float xOffset = 0; // Initialize the horizontal offset
+    float xOffset = 0;
     for (char c : text) {
         // Load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_NO_BITMAP)) {
@@ -136,7 +126,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
         result.insert(result.end(), outline.begin(), outline.end());
 
         // Update offsetX by the advance width of the current glyph
-        xOffset += face->glyph->advance.x; // Convert from 26.6 fixed-point to integer pixels
+        xOffset += face->glyph->advance.x;
     }
 
     FT_Done_Face(face);
@@ -147,7 +137,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
 
 int main(int argc, char *argv[]) {
 
-    auto polys = textToPolygons("OpenSans-Regular.ttf", "abcdefghijk");
+    auto polys = textToPolygons("DejaVuSans.ttf", "abcdefghijklmno  pqurstuvwxyz");
 
     std::cout << "[";
     for (auto poly : polys)  {
