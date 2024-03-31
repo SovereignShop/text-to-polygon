@@ -41,4 +41,23 @@ set(freetype2_LIBRARY ${freetype2_BINARY_DIR}/libfreetype.a)
 target_link_libraries(TextToPolygon PRIVATE ${freetype2_LIBRARIES})
 target_include_directories(TextToPolygon PRIVATE ${freetype2_INCLUDE_DIRS})
 
-target_link_libraries(TextToPolygon PRIVATE glm freetype)
+target_link_libraries(TextToPolygon PRIVATE freetype)
+
+target_include_directories(TextToPolygon PUBLIC
+  $<BUILD_INTERFACE:${glm_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:include>
+)
+
+install(TARGETS TextToPolygon
+  EXPORT TextToPolygonTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
+
+install(EXPORT TextToPolygonTargets
+  FILE TextToPolygonTargets.cmake
+  NAMESPACE TextToPolygon::
+  DESTINATION lib/cmake/TextToPolygon
+)
