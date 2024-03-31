@@ -31,6 +31,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(freetype2)
 
+target_link_libraries(TextToPolygon PRIVATE freetype)
+
 target_include_directories(TextToPolygon PUBLIC
   $<BUILD_INTERFACE:${freetype2_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>

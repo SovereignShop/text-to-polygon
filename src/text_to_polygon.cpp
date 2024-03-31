@@ -6,13 +6,11 @@
 #include <vector>
 #include <iostream>
 #include <cmath> // For pow function
-#include <cmath> // Make sure this include is present for std::pow
 
 using namespace std;
 
 namespace TextToPolygon {
 
-// Interpolation function remains the same
 glm::vec2 interpolateQuadraticBezier(const glm::vec2& P0, const glm::vec2& P1, const glm::vec2& P2, float t) {
     float one_minus_t = 1.0f - t;
     return one_minus_t * one_minus_t * P0 + 2.0f * one_minus_t * t * P1 + t * t * P2;
@@ -97,7 +95,6 @@ std::vector<std::vector<glm::vec2>> processOutline(const FT_Outline& outline, in
 }
 
 
-// Update the main function to include glyph spacing
 std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, const std::string& text, u_int32_t pixelHeight, int interpRes) {
     std::vector<std::vector<glm::vec2>> result;
     FT_Library ft;
@@ -118,17 +115,14 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
 
     float xOffset = 0;
     for (char c : text) {
-        // Load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_NO_BITMAP)) {
             std::cerr << "Failed to load Glyph" << std::endl;
             continue;
         }
 
-        // Convert glyph outline to polygons with the current offset
         auto outline = processOutline(face->glyph->outline, 4, xOffset);
         result.insert(result.end(), outline.begin(), outline.end());
 
-        // Update offsetX by the advance width of the current glyph
         xOffset += face->glyph->advance.x;
     }
 
