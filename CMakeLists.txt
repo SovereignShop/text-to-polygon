@@ -5,6 +5,10 @@ project(TextToPolygon VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_library(TextToPolygon
+  src/main.cpp
+)
+
 include(FetchContent)
 
 # GLM
@@ -29,7 +33,7 @@ endif()
 set(freetype2_INCLUDE_DIRS ${freetype2_SOURCE_DIR}/include)
 set(freetype2_LIBRARY ${freetype2_BINARY_DIR}/libfreetype.a)
 
-add_executable(TextToPolygon main.cpp)
+# add_executable(TextToPolygon src/main.cpp)
 target_link_libraries(TextToPolygon PRIVATE ${freetype2_LIBRARIES})
 target_include_directories(TextToPolygon PRIVATE ${freetype2_INCLUDE_DIRS})
 

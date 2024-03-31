@@ -1,5 +1,6 @@
 #include <iostream>
 #include <freetype2/ft2build.h>
+#include <sys/types.h>
 #include FT_FREETYPE_H
 #include <glm/vec2.hpp>
 #include <vector>
@@ -8,6 +9,8 @@
 #include <cmath> // Make sure this include is present for std::pow
 
 using namespace std;
+
+namespace TextToPolygon {
 
 // Interpolation function remains the same
 glm::vec2 interpolateQuadraticBezier(const glm::vec2& P0, const glm::vec2& P1, const glm::vec2& P2, float t) {
@@ -95,7 +98,7 @@ std::vector<std::vector<glm::vec2>> processOutline(const FT_Outline& outline, in
 
 
 // Update the main function to include glyph spacing
-std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, const std::string& text) {
+std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, const std::string& text, u_int32_t pixelHeight, int interpRes) {
     std::vector<std::vector<glm::vec2>> result;
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
@@ -110,7 +113,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
         return result;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 48);
+    FT_Set_Pixel_Sizes(face, 0, pixelHeight);
     FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
     float xOffset = 0;
@@ -135,9 +138,11 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
     return result;
 }
 
+}
+
 int main(int argc, char *argv[]) {
 
-    auto polys = textToPolygons("DejaVuSans.ttf", "abcdefghijklmno  pqurstuvwxyz");
+    auto polys = TextToPolygon::textToPolygons("DejaVuSans.ttf", "abc\ndef", 12, 6);
 
     std::cout << "[";
     for (auto poly : polys)  {
