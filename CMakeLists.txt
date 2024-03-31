@@ -40,17 +40,3 @@ target_include_directories(TextToPolygon PUBLIC
   $<BUILD_INTERFACE:${glm_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>
 )
-
-install(TARGETS TextToPolygon
-  EXPORT TextToPolygonTargets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
-
-install(EXPORT TextToPolygonTargets
-  FILE TextToPolygonTargets.cmake
-  NAMESPACE TextToPolygon::
-  DESTINATION lib/cmake/TextToPolygon
-)
