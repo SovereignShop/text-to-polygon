@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <string>
-#include <freetype2/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 #include <glm/vec2.hpp>
 
