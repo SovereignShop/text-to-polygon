@@ -29,19 +29,12 @@ FetchContent_Declare(
   freetype2
   URL https://download.savannah.gnu.org/releases/freetype/freetype-2.10.1.tar.gz
 )
-FetchContent_GetProperties(freetype2)
-if(NOT freetype2_POPULATED)
-  FetchContent_Populate(freetype2)
-  add_subdirectory(${freetype2_SOURCE_DIR} ${freetype2_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(freetype2)
 
-set(freetype2_INCLUDE_DIRS ${freetype2_SOURCE_DIR}/include)
-set(freetype2_LIBRARY ${freetype2_BINARY_DIR}/libfreetype.a)
-
-target_link_libraries(TextToPolygon PRIVATE ${freetype2_LIBRARIES})
-target_include_directories(TextToPolygon PRIVATE ${freetype2_INCLUDE_DIRS})
-
-target_link_libraries(TextToPolygon PRIVATE freetype)
+target_include_directories(TextToPolygon PUBLIC
+  $<BUILD_INTERFACE:${freetype2_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 target_include_directories(TextToPolygon PUBLIC
   $<BUILD_INTERFACE:${glm_SOURCE_DIR}>
