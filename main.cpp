@@ -78,11 +78,7 @@ std::vector<glm::vec2> processContour(
        for (size_t i = 0; i < controlPoints.size(); i += 2) {
            glm::vec2 control = controlPoints[i];
            glm::vec2 onCurve = (i + 1 < controlPoints.size()) ? controlPoints[i + 1] : end;
-           //printPoly({start, control, onCurve});
            std::vector<glm::vec2> bezierPoints = interpolateQuadraticBezierSegment(start, control, onCurve, resolution);
-           std::cout << "bezier: ";
-           printPoly(bezierPoints);
-           std::cout << std::endl;
            contourPoints.insert(contourPoints.end(), bezierPoints.begin(), bezierPoints.end());
            start = onCurve;
        }
@@ -90,8 +86,8 @@ std::vector<glm::vec2> processContour(
     return contourPoints;
 }
 
-std::vector<glm::vec2> processOutline(const FT_Outline& outline, int resolution, float xOffset) {
-    std::vector<glm::vec2> points;
+std::vector<std::vector<glm::vec2>> processOutline(const FT_Outline& outline, int resolution, float xOffset) {
+    std::vector<std::vector<glm::vec2>> points;
     std::vector<FT_Vector> outlinePoints(outline.points, outline.points + outline.n_points);
     std::vector<char> outlineTags(outline.tags, outline.tags + outline.n_points);
 
@@ -100,7 +96,7 @@ std::vector<glm::vec2> processOutline(const FT_Outline& outline, int resolution,
         int contourEndIdx = outline.contours[contourIndex];
         std::cout << contourStartIdx << " " << contourEndIdx << std::endl;
         std::vector<glm::vec2> contourPoints = processContour(outlinePoints, outlineTags, contourStartIdx, contourEndIdx, resolution, xOffset);
-        points.insert(points.end(), contourPoints.begin(), contourPoints.end());
+        points.push_back(contourPoints);
         contourStartIdx = contourEndIdx+1;
     }
 
@@ -136,7 +132,8 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
         }
 
         // Convert glyph outline to polygons with the current offset
-        result.push_back(processOutline(face->glyph->outline, 4, xOffset));
+        auto outline = processOutline(face->glyph->outline, 4, xOffset);
+        result.insert(result.end(), outline.begin(), outline.end());
 
         // Update offsetX by the advance width of the current glyph
         xOffset += face->glyph->advance.x; // Convert from 26.6 fixed-point to integer pixels
@@ -150,7 +147,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
 
 int main(int argc, char *argv[]) {
 
-    auto polys = textToPolygons("OpenSans-Regular.ttf", "i");
+    auto polys = textToPolygons("OpenSans-Regular.ttf", "abcdefghijk");
 
     std::cout << "[";
     for (auto poly : polys)  {
