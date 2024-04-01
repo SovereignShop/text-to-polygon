@@ -120,7 +120,7 @@ std::vector<std::vector<glm::vec2>> textToPolygons(const std::string& fontFile, 
             continue;
         }
 
-        auto outline = processOutline(face->glyph->outline, 4, xOffset);
+        auto outline = processOutline(face->glyph->outline, interpRes, xOffset);
         result.insert(result.end(), outline.begin(), outline.end());
 
         xOffset += face->glyph->advance.x;
