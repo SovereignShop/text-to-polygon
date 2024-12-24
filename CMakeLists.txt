@@ -15,14 +15,6 @@ target_include_directories(TextToPolygon PUBLIC
 
 include(FetchContent)
 
-# GLM
-# FetchContent_Declare(
-#   glm
-#   GIT_REPOSITORY https://github.com/g-truc/glm.git
-#   GIT_TAG        origin/master
-# )
-# FetchContent_MakeAvailable(glm)
-
 # FreeType
 FetchContent_Declare(
   freetype2
