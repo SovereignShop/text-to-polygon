@@ -14,9 +14,9 @@ using vec4 = linalg::vec<double, 4>;
 
 namespace TextToPolygon {
 
-vec2 interpolateQuadraticBezier(const vec2& P0, const vec2& P1, const vec2& P2, float t) {
-    float one_minus_t = 1.0f - t;
-    return one_minus_t * one_minus_t * P0 + 2.0f * one_minus_t * t * P1 + t * t * P2;
+vec2 interpolateQuadraticBezier(const vec2& P0, const vec2& P1, const vec2& P2, double t) {
+    double one_minus_t = 1.0d - t;
+    return one_minus_t * one_minus_t * P0 + 2.0d * one_minus_t * t * P1 + t * t * P2;
 }
 
 std::vector<vec2> interpolateQuadraticBezierSegment(
@@ -27,7 +27,7 @@ std::vector<vec2> interpolateQuadraticBezierSegment(
 ) {
     std::vector<vec2> points;
     for (int step = 0; step <= resolution; ++step) {
-        float t = step / static_cast<float>(resolution);
+        double t = step / static_cast<double>(resolution);
         vec2 point = interpolateQuadraticBezier(start, control, end, t);
         points.push_back(point);
     }
@@ -40,7 +40,7 @@ std::vector<vec2> processContour(
     int contourStartIdx,
     int contourEndIdx,
     int resolution,
-    float xOffset) {
+    double xOffset) {
 
     int currentIndex = contourStartIdx;
     std::vector<vec2> contourPoints;
@@ -60,7 +60,7 @@ std::vector<vec2> processContour(
        // Add midpoint if even number of control points
        if (controlPoints.size() > 0 && controlPoints.size() % 2 == 0) {
            size_t lastControlIndex = controlPoints.size() - 1;
-           vec2 midpoint = (controlPoints[lastControlIndex] + controlPoints[lastControlIndex - 1]) * 0.5f;
+           vec2 midpoint = (controlPoints[lastControlIndex] + controlPoints[lastControlIndex - 1]) * 0.5d;
            controlPoints.insert(controlPoints.end() - 1, midpoint);
        }
 
@@ -81,7 +81,7 @@ std::vector<vec2> processContour(
 
 }
 
-std::vector<std::vector<vec2>> processOutline(const FT_Outline& outline, int resolution, float xOffset) {
+std::vector<std::vector<vec2>> processOutline(const FT_Outline& outline, int resolution, double xOffset) {
     std::vector<std::vector<vec2>> points;
     std::vector<FT_Vector> outlinePoints(outline.points, outline.points + outline.n_points);
     std::vector<char> outlineTags(outline.tags, outline.tags + outline.n_points);
@@ -116,7 +116,7 @@ std::vector<std::vector<vec2>> textToPolygons(const std::string& fontFile, const
     FT_Set_Pixel_Sizes(face, 0, pixelHeight);
     FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 
-    float xOffset = 0;
+    double xOffset = 0;
     for (char c : text) {
         if (FT_Load_Char(face, c, FT_LOAD_NO_BITMAP)) {
             std::cerr << "Failed to load Glyph" << std::endl;
