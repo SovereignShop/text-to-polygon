@@ -15,8 +15,8 @@ using vec4 = linalg::vec<double, 4>;
 namespace TextToPolygon {
 
 vec2 interpolateQuadraticBezier(const vec2& P0, const vec2& P1, const vec2& P2, double t) {
-    double one_minus_t = 1.0d - t;
-    return one_minus_t * one_minus_t * P0 + 2.0d * one_minus_t * t * P1 + t * t * P2;
+    double one_minus_t = 1.0 - t;
+    return one_minus_t * one_minus_t * P0 + 2.0 * one_minus_t * t * P1 + t * t * P2;
 }
 
 std::vector<vec2> interpolateQuadraticBezierSegment(
@@ -60,7 +60,7 @@ std::vector<vec2> processContour(
        // Add midpoint if even number of control points
        if (controlPoints.size() > 0 && controlPoints.size() % 2 == 0) {
            size_t lastControlIndex = controlPoints.size() - 1;
-           vec2 midpoint = (controlPoints[lastControlIndex] + controlPoints[lastControlIndex - 1]) * 0.5d;
+           vec2 midpoint = (controlPoints[lastControlIndex] + controlPoints[lastControlIndex - 1]) * 0.5;
            controlPoints.insert(controlPoints.end() - 1, midpoint);
        }
 
