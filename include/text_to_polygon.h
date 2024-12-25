@@ -5,13 +5,12 @@
 #include <vector>
 #include <string>
 #include <ft2build.h>
+#include "linalg.h"
 #include FT_FREETYPE_H
 
 
 using namespace std;
 using vec2 = linalg::vec<double, 2>;
-using vec3 = linalg::vec<double, 3>;
-using vec4 = linalg::vec<double, 4>;
 
 namespace TextToPolygon {
 
